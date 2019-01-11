@@ -39,7 +39,24 @@ export default StyleSheet.create({
     marginVertical:10,
     width:300,
     paddingVertical:10
-  }
-
+  },
+  blockFiles: { 
+    flexDirection:'row'
+  },
+  accepted:{
+    width:300,
+    color:'green'
+  },
+  notSend:{
+    color:'grey'
+  },
+  refused:{
+    width:250,
+    color:'red'
+  },
+  icon: {
+    width:25,
+    height:25
+  },
 })
 

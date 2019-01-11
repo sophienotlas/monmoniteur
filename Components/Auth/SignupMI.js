@@ -1,27 +1,15 @@
-import React, {Component} from 'react'
+import React from 'react'
 import {
-  Platform,
   StyleSheet,
   Text,
   View,
-  StatusBar,
-  Image,
   Switch,
-  Button,
   TextInput,
   TouchableOpacity,
-  ImageBackground,
-  TouchableHighlight,
-  Modal
-  } from 'react-native'
-import {
-  FormLabel, 
-  CheckBox
-} from 'react-native-elements'
+  ImageBackground  } from 'react-native'
 
 import {auth, db} from '../../Firebase/Firebase'
 
-import {StackNavigator} from 'react-navigation'
 
 import CGV from './CGV'
 

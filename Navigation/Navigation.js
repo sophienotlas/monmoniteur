@@ -7,32 +7,59 @@ import Signup from '../Components/Auth/Signup';
 import SignupAE from '../Components/Auth/SignupAE';
 import SignupMI from '../Components/Auth/SignupMI';
 import ForgotPassword from '../Components/Auth/ForgotPassword';
-import Logo from '../Components/Logo';
 import Home from '../Components/Home';
-import ProfileMI from '../Components/ProfileMI';
+import ProfileMI from '../Components/Profile/ProfileMI';
+import EditProfileMI from '../Components/Profile/EditProfileMI';
 
 
   const MenuNavigation = createStackNavigator ({
   	Login: {
-  		screen: Login
-  	},
+      screen: Login,
+      navigationOptions: {
+        header: null,
+     }
+    },
     Signup:{
-      screen: Signup
+      screen: Signup,
+      navigationOptions: {
+        header: null,
+     }
     },
     SignupAE:{
-      screen: SignupAE
+      screen: SignupAE,
+      navigationOptions: {
+        header: null,
+     }
     },
     SignupMI:{
-      screen: SignupMI
+      screen: SignupMI,
+      navigationOptions: {
+        header: null,
+     }
     },
     Home:{
-      screen: Home
+      screen: Home,
+      navigationOptions: {
+        header: null,
+     }
     },
     ForgotPassword:{
-      screen: ForgotPassword
+      screen: ForgotPassword,
+      navigationOptions: {
+        header: null,
+     }
     },
     ProfileMI:{
-      screen: ProfileMI
+      screen: ProfileMI,
+      navigationOptions: {
+        header: null,
+     }
+    },
+    EditProfileMI:{
+      screen: EditProfileMI,
+      navigationOptions: {
+        header: null,
+     }
     }
   })
 
