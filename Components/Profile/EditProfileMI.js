@@ -22,6 +22,7 @@ import {
   ImagePicker,
   Permissions
 } from 'expo';
+import { RadioButtons } from 'react-native-radio-buttons'
 
 import {auth, db, fb } from '../../Firebase/Firebase';
 import styles from '../../Styles/Style'
@@ -30,16 +31,15 @@ class ProfileMI extends React.Component {
   constructor() {
     super();
     this.moniteur = db.ref('users/'+auth.currentUser.uid);
-    this.state = {userName:'', siret:'', tarif:'', moniteurOuAutoEcole: '', experience:'', error:'', image: null, uploading: false};
+    this.state = {userName:'', siret:'', tarifBrute:'', tarifNet:'', moniteurOuAutoEcole: '', experience:'', error:'', image: null, uploading: false};
     this.state.userName = auth.currentUser.displayName;
   }
 
   getDataUser(moniteur){
     this.moniteur.on('value', (snap) => {
-      console.log("snap" + snap.val().siretNumber)
       this.setState({
-         siret: snap.val().siretNumber,
-         tarif: snap.val().tarifHeure,
+         siret: snap.val().siret,
+         tarifBrute: snap.val().tarif
       });
     })
     console.log(this.state.siret)
@@ -75,21 +75,27 @@ class ProfileMI extends React.Component {
     return estValide;
   }
  
+  convertTarif(tarif) {
+    console.log(tarif.tarif);
+    let tarifNumber = tarif.tarif;
+    let percentage = parseFloat(tarifNumber)-((tarifNumber*20)/100);
+    this.setState({tarifNet: percentage})
+  }
+
   _onSavePress() {
-    const {userName, siret, tarif} = this.state;
     auth.currentUser.updateProfile({
-        displayName: userName
+        displayName: this.state.userName
     }).then(function() {
       console.log('Nom récupéré ')
     }).catch(function() {
       console.log('Nom non récupéré ')
     });    
-    if(this.validedSiret(siret)){
+    if(this.validedSiret(this.state.siret)){
       console.log('ok1');
       db.ref('users/' + auth.currentUser.uid).update({
         moniteurOuAutoEcole: 'moniteur',
-        siretNumber: siret,
-        tarifHeure : tarif
+        siret: this.state.siret,
+        tarif : this.state.tarifNet
       }).then((data)=>{
         console.log('data ' , data)
         this.props.navigation.navigate('ProfileMI')
@@ -97,8 +103,6 @@ class ProfileMI extends React.Component {
         console.log('error ' , error)
       })
     } else {
-      
-      console.log(this.validedSiret(siret));
       (error) => {
         this.setState({error:"Siret incorrecte", loading:false})
       }
@@ -223,7 +227,15 @@ _renderButtonOrLoading(){
 
   render(){
     let { image } = this.state;
-    return(
+    
+    const options = [
+      "0-2 ans",
+      "3-6 ans",
+      "7-9 ans",
+      "10+ ans"
+    ];
+
+    return(      
       <ScrollView>        
         <ImageBackground source={require('../../Images/accueil.jpg')} style={styles.container}>
           <Image
@@ -239,6 +251,13 @@ _renderButtonOrLoading(){
                       />
           <Text>Localisation : </Text>
           <Text>Années d'expérience dans les auto-écoles : </Text>
+          <RadioButtons
+              options={ options }
+              onSelection={ setSelectedOption.bind(this) }
+              selectedOption={this.state.selectedOption }
+              renderOption={ renderOption }
+              renderContainer={ renderContainer }
+            />
           <Picker
             selectedValue={this.state.experience}
             style={{ height: 50, width: 200, backgroundColor:'white' }}
@@ -246,13 +265,17 @@ _renderButtonOrLoading(){
             <Picker.Item label="0-2 ans" value="0-2" />
             <Picker.Item label="6-9 ans" value="3-5" />
           </Picker>
+          <Text>Tarifs à l'heure :</Text>
           <TextInput style={styles.inputBox}
                       underlineColorAndroid='rgba(0,0,0,0)'
                       value = {this.state.tarif}
                       placeholder= "Tarifs à l'heure"
                       maxLength={5}
                       keyboardType = 'numeric'
-                      onChangeText={tarif => this.setState({tarif})}/>
+                      onChangeText={tarif => this.convertTarif({tarif})}/>
+          <Text>Ce que je gagne : {this.state.tarifNet} </Text>       
+          <Text>Lorsque vous acceptez une mission, le taux de droit est de 20% hors taxes.</Text>
+          <Text>Siret :</Text>
           <TextInput style={styles.inputBox}
                       underlineColorAndroid='rgba(0,0,0,0)'
                       value = {this.state.siret}

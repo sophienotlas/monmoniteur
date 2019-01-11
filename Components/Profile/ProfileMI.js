@@ -27,14 +27,18 @@ class ProfileMI extends React.Component {
   constructor() {
     super();
     this.moniteur = db.ref('users/'+auth.currentUser.uid)
-    this.state = {siret:'', tarif:'', moniteurOuAutoEcole: '', imageURL: '', uploading: false}
+    this.state = {siret:'', tarif:'', validedAutorisation:'', validedCarteGrise:'', validedRCPro:'', validedAssurance:'', moniteurOuAutoEcole: '', imageURL: '', uploading: false}
   }
 
   getDataUser(moniteur){
     this.moniteur.on('value', (snap) => {
       this.setState({
-         siret: snap.val().siretNumber,
-         tarif: snap.val().tarifHeure,
+         siret: snap.val().siret,
+         tarif: snap.val().tarif,
+         validedAutorisation: snap.val().tarif, 
+         validedCarteGrise:'', 
+         validedRCPro:'', 
+         validedAssurance:''
       });
     })
     console.log(this.state.siret)
@@ -65,19 +69,19 @@ class ProfileMI extends React.Component {
       }
   }
   
-  _getDocument(name){
-    if(this.state.validatedAccount === 1){
+  _getDocument(validated, name){
+    if(validated === 1){
       return <View style={styles.blockFiles}>
         <Text style={styles.accepted}>Votre {name} a été validé</Text>
         <Image style={styles.icon} source={require('../../Images/accepted.png')}/>
       </View>     
     }
-    else if (this.state.validatedAccount === 0){
+    else if (validated === 0){
       return <View style={styles.blockFiles}>
       <Text style={styles.notSend}>Votre {name} est en cours de validation</Text>
     </View>  
     }
-    else if (this.state.validatedAccount === -1){
+    else if (validated === -1){
       return <View style={styles.blockFiles}>
       <Text style={styles.refused}>Votre {name} a été refusé</Text>
       <Image style={styles.icon} source={require('../../Images/refused.png')}/>
@@ -103,9 +107,9 @@ class ProfileMI extends React.Component {
           <Text>Tarifs : {this.state.tarif} €/heure</Text>
           <Text>Siret : {this.state.siret}</Text>
           <View style={styles.blockFiles}></View>
-          {this._getDocument("autorisation d'enseignement")}
-          {this._getDocument("carte grise")}
-          {this._getDocument("assurance")}
+          {this._getDocument(this.validedAutorisation, "autorisation d'enseignement")}
+          {this._getDocument(this.validedCarteGrise, "carte grise")}
+          {this._getDocument(this.validedAssurance,"assurance")}
           {this._getDocument("RC Pro")}
           
         <TouchableOpacity onPress={() => this.props.navigation.navigate('EditProfileMI')} style={styles.button}>
