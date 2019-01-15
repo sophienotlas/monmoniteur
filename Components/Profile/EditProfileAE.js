@@ -29,39 +29,13 @@ import styles from '../../Styles/Style'
 
 
 
-class EditProfileMI extends React.Component {
+class EditProfileAE extends React.Component {
   constructor(props) {
     super(props);
-    this.moniteur = db.ref('moniteurs/'+auth.currentUser.uid);
-    this.permis = db.ref('moniteurs/'+auth.currentUser.uid+ '/typePermisSelect');
-    this.state = {userName:'', tel:'', address:'', localisation:'', siret:'', tarifBrute:'', experience:'', permis:[], image: null, uploading: false};
-    this.state = {validatedAutorisation:null, validatedCarteGrise:null, validatedAssurance:null, validatedRCPro:null};
-    this.state = {messageAssurance:'', messageAutorisation:'', messageCarteGrise:'', messageRCPro:'', errorSiret:''}
+    this.autoecole = db.ref('autoecoles/'+auth.currentUser.uid);
+    this.state = {userName:'', name:'', firstname:'', nbMoniteurs:'', tel:'', address:'', localisation:'', siret:'', image: null, uploading: false};
+    this.state = {validatedKbis:null, messageKbis:''};
     this.state.userName = auth.currentUser.displayName;
-    this.state = {typePermisSelect: []};
-  }
-
- 
-
-  renderPermis(id){  
-    var index;
-    console.log(this.state.typePermisSelect)
-    if(this.state.typePermisSelect !== 'undefined'){
-      index = this.state.typePermisSelect.indexOf(id);
-    } else {
-      index= -1
-    }
-    return <View>
-      <TouchableOpacity 
-      onPress={() => {if (index !== -1) {
-        this.setState({typePermisSelect: this.state.typePermisSelect.filter((_, i) => i !== index)});
-      } else {
-        this.setState(prevState => ({typePermisSelect: [...prevState.typePermisSelect, id]})); 
-      }console.log(this.state.typePermisSelect)}} 
-      style={(index !== -1) ? styles.buttonPermisSelected : styles.buttonPermis}>
-        <Text style={(index !== -1) ? styles.buttonPermisTextSelected : styles.buttonTextPermis}>{id}</Text>
-      </TouchableOpacity>
-    </View>
   }
 
 
@@ -69,26 +43,17 @@ class EditProfileMI extends React.Component {
     this.setState({
       userName: auth.currentUser.displayName
     })
-    this.moniteur.on('value', (snap) => {
+    this.autoecole.on('value', (snap) => {
       this.setState({
-         tel: snap.val().tel,
-         siret: snap.val().siret,
-         address: snap.val().address,
-         localisation: snap.val().localisation,
-         tarifBrute: snap.val().tarif,
-         experience: snap.val().experience,
-         validatedAutorisation: snap.val().validatedAutorisation,
-         validatedCarteGrise: snap.val().validatedCarteGrise,
-         validatedAssurance: snap.val().validatedAssurance,
-         validatedRCPro: snap.val().validatedRCPro
+        name: snap.val().name,
+        firstname: snap.val().firstname,
+        address: snap.val().address,
+        localisation: snap.val().localisation,
+        tel : snap.val().tel,
+        siret: snap.val().siret,
+        nbMoniteurs: snap.val().nbMoniteurs,
+        validatedKbis: snap.val().validatedKbis
       });
-    })
-    this.permis.once('value', (snap) => {
-      if(snap.exists()){
-        this.setState({
-           typePermisSelect: snap.val().typePermisSelect
-        });
-      }
     })
   }
 
@@ -122,15 +87,8 @@ class EditProfileMI extends React.Component {
     return estValide;
   }
  
-  convertTarif(tarif) {
-    return parseFloat(tarif)-((tarif*20)/100);
-  }
+ 
 
-  setSelectedOption(experience){
-    this.setState({
-      experience
-    });
-  }
 
   _onSavePress() {
     auth.currentUser.updateProfile({
@@ -141,21 +99,19 @@ class EditProfileMI extends React.Component {
       console.log('Nom non récupéré ')
     });    
     if(this.validedSiret(this.state.siret)){
-      db.ref('moniteurs/' + auth.currentUser.uid).update({
+      db.ref('moniteurs/' + auth.currentUser.uid).update({   
+        name: this.state.name,
+        firstname: this.state.firstname,
         siret: this.state.siret,
         tarif: this.state.tarifBrute,
         tel: this.state.tel,
         address: this.state.address,
         localisation: this.state.localisation,
-        experience: this.state.experience,
-        typePermisSelect: this.state.typePermisSelect,
-        validatedAutorisation: this.state.validatedAutorisation,
-        validatedCarteGrise: this.state.validatedCarteGrise,
-        validatedAssurance: this.state.validatedAssurance,
-        validatedRCPro: this.state.validatedRCPro
+        nbMoniteurs: this.state.nbMoniteurs,
+        validatedKbis: this.state.validatedKbis
       }).then((data)=>{
         console.log('data ' , data)
-        this.props.navigation.navigate('ProfileMI')
+        this.props.navigation.navigate('ProfileAE')
      }).catch((error)=>{
         console.log('error ' , error)
       })
@@ -231,28 +187,10 @@ class EditProfileMI extends React.Component {
      })
     } else {
       ref = fb.storage().ref().child(auth.currentUser.uid + imageObjectif);
-      switch(imageObjectif){
-        case '/Autorisation':
+      if(imageObjectif === '/Kbis'){
           this.setState({
-            validatedAutorisation: 0,
-            messageAutorisation: 'Autorisation envoyée'});
-          break;
-        case '/Carte-grise':
-          this.setState({
-            validatedCarteGrise: 0,
-            messageCarteGrise: 'Carte grise envoyée'});
-          break;
-        case '/Assurance':
-          this.setState({
-            validatedAssurance: 0,
-            messageAssurance: 'Assurance envoyée'});
-          break;
-        case '/RC-Pro':
-          this.setState({
-            alidatedRCPro: 0,
-            messageRCPro: 'RC Pro envoyé'
-          });
-          break;
+            validatedKbis: 0,
+            messageKbis: 'Kbis envoyé'});
       }
       const snapshot = await ref.put(blob);
       blob.close();
@@ -295,12 +233,6 @@ class EditProfileMI extends React.Component {
   render(){
     let { image } = this.state;
     
-    const options = [
-      "0-3 ans",
-      "4-8 ans",
-      "9+ ans"
-    ];
-    
     
     return(      
       <ScrollView>        
@@ -311,22 +243,45 @@ class EditProfileMI extends React.Component {
           />
           {this._renderTakePictureOrUpload('profilePicture')}   
           
-          <Text style={{fontWeight:'bold'}}>Nom/Prénom</Text>   
+          <Text style={{fontWeight:'bold'}}>Nom de l'auto-école</Text>   
           <TextInput style={styles.inputBox}
                       underlineColorAndroid='rgba(0,0,0,0)'
                       value = {this.state.userName}
-                      placeholder="Nom/Prénom"
+                      placeholder="Nom de l'auto-école"
                       onChangeText={userName => this.setState({userName})}
                       />
-          <Text style={{fontWeight:'bold'}}>Téléphone</Text>   
+        <Text style={{fontWeight:'bold'}}>Gérant</Text> 
+          <TextInput style={styles.inputBox}
+                      underlineColorAndroid='rgba(0,0,0,0)'
+                      value = {this.state.name}
+                      placeholder="Nom"
+                      onChangeText={name => this.setState({name})}
+                      /> 
+        <TextInput style={styles.inputBox}
+                    underlineColorAndroid='rgba(0,0,0,0)'
+                    value = {this.state.firstname}
+                    placeholder="Prénom"
+                    onChangeText={firstname => this.setState({firstname})}
+                    />
+            
+          <Text style={{fontWeight:'bold'}}>Nombre de moniteurs</Text>   
               <TextInput style={styles.inputBox}
                   underlineColorAndroid='rgba(0,0,0,0)'
-                  value = {this.state.tel}
-                  maxLength={15}
+                  value = {this.state.nbMoniteurs}
+                  maxLength={3}
                   keyboardType = 'numeric'
-                  placeholder="06 XX XX XX XX"
-                  onChangeText={tel => this.setState({tel})}
+                  placeholder="1"
+                  onChangeText={nbMoniteurs => this.setState({nbMoniteurs})}
               />
+        <Text style={{fontWeight:'bold'}}>Téléphone</Text>   
+            <TextInput style={styles.inputBox}
+                underlineColorAndroid='rgba(0,0,0,0)'
+                value = {this.state.tel}
+                maxLength={15}
+                keyboardType = 'numeric'
+                placeholder="06 XX XX XX XX"
+                onChangeText={tel => this.setState({tel})}
+            />
           <Text style={{fontWeight:'bold'}}>Localisation</Text> 
           <TextInput style={styles.inputBox}
                       underlineColorAndroid='rgba(0,0,0,0)'
@@ -340,42 +295,6 @@ class EditProfileMI extends React.Component {
                     placeholder="Paris"
                     onChangeText={localisation => this.setState({localisation})}
                     />
-          <Text style={{fontWeight:'bold'}}>Titulaire des permis</Text> 
-          <View style={{flex:1, flexWrap: 'wrap', flexDirection:'row', width:300}}>
-            {this.renderPermis('A1')}         
-            {this.renderPermis('AD')} 
-            {this.renderPermis('AP')}  
-            {this.renderPermis('B')} 
-            {this.renderPermis('B1')} 
-            {this.renderPermis('C')} 
-            {this.renderPermis('D')} 
-            {this.renderPermis('E(B)')} 
-            {this.renderPermis('E(C)')} 
-            {this.renderPermis('E(D)')} 
-            {this.renderPermis('Bateau')} 
-          </View>
-          <Text style={{fontWeight:'bold'}}>Années d'expérience dans les auto-écoles</Text>
-          <SegmentedControls        
-            tint={'#0e2baa'}
-            selectedTint= {'white'}
-            options={ options }  
-            allowFontScaling={ false } // default: true
-            onSelection={ this.setSelectedOption.bind(this) }
-            selectedOption={this.state.experience }
-            optionStyle={{paddingVertical:5}} 
-            containerStyle={{width: 300}}
-          />
-          <Text  style={{fontWeight:'bold'}}>Tarifs à l'heure</Text>
-          {console.log(this.state.tarifBrute)}
-          <TextInput style={styles.inputBox}
-                      underlineColorAndroid='rgba(0,0,0,0)'
-                      value = {this.state.tarifBrute}
-                      placeholder= "Tarifs à l'heure"
-                      maxLength={5}
-                      keyboardType = 'numeric'
-                      onChangeText={tarifBrute => this.setState({tarifBrute})}/>
-          <Text>Ce que je gagne : {this.convertTarif(this.state.tarifBrute)} €/h </Text>       
-          <Text style={{width:300}}>Lorsque vous acceptez une mission, le taux de droit est de 20% hors taxes.</Text>
           <Text style={{fontWeight:'bold'}}>Siret</Text>
           <TextInput style={styles.inputBox}
                       underlineColorAndroid='rgba(0,0,0,0)'
@@ -385,17 +304,8 @@ class EditProfileMI extends React.Component {
                       keyboardType = 'numeric'
                       onChangeText={siret => this.setState({siret})}/>
           <Text style={{color: 'red'}}>{this.state.errorSiret}</Text>   
-          <Text style={{fontWeight:'bold'}}>Autorisation d'enseignement</Text>          
-          {this._renderTakePictureOrUpload('/Autorisation')}
-          <Text>{this.state.messageAutorisation}</Text>
-          <Text style={{fontWeight:'bold'}}>Carte grise</Text>
-          {this._renderTakePictureOrUpload('/Carte-grise')} 
-          <Text>{this.state.messageCarteGrise}</Text>
-          <Text style={{fontWeight:'bold'}}>Assurance</Text>
-          {this._renderTakePictureOrUpload('/Assurance')}  
-          <Text>{this.state.messageAssurance}</Text>
-          <Text style={{fontWeight:'bold'}}>RC Pro</Text>
-          {this._renderTakePictureOrUpload('/RC-Pro')}  
+          <Text style={{fontWeight:'bold'}}>Kbis de - de 3 mois</Text>          
+          {this._renderTakePictureOrUpload('/Kbis')} 
           <Text>{this.state.messageRCPro}</Text>
           {this._renderButtonOrLoading()}     
         </ImageBackground> 
@@ -404,7 +314,7 @@ class EditProfileMI extends React.Component {
   }
 }
 
-export default EditProfileMI;
+export default EditProfileAE;
 
 
 const customs = StyleSheet.create({

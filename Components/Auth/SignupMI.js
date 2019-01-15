@@ -38,7 +38,21 @@ class SignupMI extends React.Component {
           auth.currentUser.updateProfile({
              displayName: userName
           });
-          db.ref('users/' + auth.currentUser.uid).set({moniteurOuAutoEcole: 'moniteur'})
+          db.ref('moniteurs/' + auth.currentUser.uid).set(
+            {
+              siret: '',
+              tarif: '-',
+              tel: '',
+              address: '',
+              localisation: '',
+              experience: '',
+              typePermisSelect: [],
+              validatedAutorisation: null,
+              validatedCarteGrise: null,
+              validatedAssurance: null,
+              validatedRCPro: null,
+              validatedAccount: -1
+          })
           this.props.navigation.navigate('Home')
         })
         .catch(() => {
@@ -77,6 +91,7 @@ class SignupMI extends React.Component {
           <TextInput 
            style={styles.inputBox}
            value = {this.state.email}
+           autoCapitalize = 'none'
            underlineColorAndroid='rgba(0,0,0,0)'
            placeholder='Email'
            onChangeText={email => this.setState({email})}

@@ -9,7 +9,8 @@ import {
   Button,
   TextInput,
   TouchableOpacity,
-  ImageBackground
+  ImageBackground,
+  KeyboardAvoidingView
 } from 'react-native'
 import { StackNavigator} from 'react-navigation'
 import {
@@ -19,7 +20,7 @@ import {
 
 import Logo from '../../Components/Logo';
 
-import {auth} from '../../Firebase/Firebase'
+import {auth, db} from '../../Firebase/Firebase'
 
 import styles from '../../Styles/Style'
 
@@ -35,7 +36,11 @@ class Login extends React.Component {
     auth.signInWithEmailAndPassword(email, password)
     .then(() => {
       this.setState({error:'', loading:false})
-      this.props.navigation.navigate('ProfileMI')
+      if(db.ref('autoecoles/'+auth.currentUser.uid)){
+        this.props.navigation.navigate('ProfileAE')
+      } else {
+        this.props.navigation.navigate('ProfileMI')
+      }
     })
     .catch(() => {
       this.setState({error:'Prob authentification', loading:false})
@@ -57,8 +62,10 @@ class Login extends React.Component {
     return(
       <ImageBackground source={require('../../Images/accueil.jpg')} style={styles.container}>
         <View style={styles.container}>
+        <KeyboardAvoidingView behavior='position'>
           <Logo/>
           <TextInput style={styles.inputBox}
+                      autoCapitalize = 'none'
                       underlineColorAndroid='rgba(0,0,0,0)'
                       value = {this.state.email}
                       placeholder='Identifiant'
@@ -70,7 +77,7 @@ class Login extends React.Component {
                      placeholder='Mot de passe'
                      secureTextEntry={true}
                      onChangeText={password => this.setState({password})}/>
-
+          </KeyboardAvoidingView>
           <Text>{this.state.error}</Text>         
           {this._renderButtonOrLoading()}
           <TouchableOpacity onPress={() => this.props.navigation.navigate('ForgotPassword')}>

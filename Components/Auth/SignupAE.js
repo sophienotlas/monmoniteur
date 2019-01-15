@@ -43,18 +43,30 @@ class SignupAE extends React.Component {
   }
 
   _onSignupPress() {
-    const {email, password, passwordConfirm, checked} = this.state;
+    const {userName, email, password, passwordConfirm, checked} = this.state;
     if(password === passwordConfirm){
+      console.log(checked)
       if(checked){
         auth.createUserWithEmailAndPassword(email, password)
         .then(() =>{
           auth.currentUser.updateProfile({
              displayName: userName
           });
-          db.ref('users/' + auth.currentUser.uid).set({moniteurOuAutoEcole: 'autoecole'})
+          db.ref('autoecoles/' + auth.currentUser.uid).set(
+            {
+            name: '',
+            firstname: '',
+            address: '',
+            localisation: '',
+            tel : '-',
+            siret: '',
+            nbMoniteurs: '',
+            validatedKbis: null,
+            validatedAccount: -1
+          })
           this.props.navigation.navigate('Home')
         })
-        .catch((error) => {
+        .catch(() => {
           this.setState({error:"Problème d'authentification", loading:false})
         })
       } else {

@@ -40,14 +40,39 @@ export default StyleSheet.create({
     width:300,
     paddingVertical:10
   },
+  buttonPermis:{
+    borderColor:'rgba(0,0,0,0.3)',
+    borderWidth:1,
+    marginVertical:5,
+    marginHorizontal:5,
+    paddingVertical:5,
+    paddingHorizontal: 10
+  },
+  buttonPermisSelected:{
+    borderColor:'rgba(0,0,0,0.3)',
+    borderWidth:1,
+    color:'white',
+    backgroundColor:'rgba(14,43,170,1)',
+    marginVertical:5,
+    marginHorizontal:5,
+    paddingVertical:5,
+    paddingHorizontal: 10
+  },
+  buttonPermisText:{
+    color:'black'
+  },
+  buttonPermisTextSelected:{
+    color:'white'
+  },
   blockFiles: { 
     flexDirection:'row'
   },
   accepted:{
-    width:300,
+    width:250,
     color:'green'
   },
   notSend:{
+    width: 275,
     color:'grey'
   },
   refused:{
@@ -57,6 +82,6 @@ export default StyleSheet.create({
   icon: {
     width:25,
     height:25
-  },
+  }
 })
 

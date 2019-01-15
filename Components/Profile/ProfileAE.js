@@ -24,32 +24,27 @@ import {
 import {auth, db, fb } from '../../Firebase/Firebase';
 import styles from '../../Styles/Style'
 
-class ProfileMI extends React.Component {
+class ProfileAE extends React.Component {
   constructor() {
     super();
-    this.moniteur = db.ref('moniteurs/'+auth.currentUser.uid)
-    this.state = {siret:'', tarif:'', tel:'', address:'', localisation:'', experience:'', validatedAutorisation:'', validatedCarteGrise:'', validatedRCPro:'', validatedAssurance:'', validatedAccount:'', imageURL: '', uploading: false}
+    this.autoecole = db.ref('autoecoles/'+auth.currentUser.uid)
+    this.state = {siret:'', name:'', firstname:'', tel:'', address:'', validatedAccount:'', localisation:'', nbMoniteurs:'', validatedKbis:'', imageURL: '', uploading: false}
   }
 
   getDataUser(){
-    this.moniteur.on('value', (snap) => {
+    this.autoecole.on('value', (snap) => {
       this.setState({
          validatedAccount: snap.val().validatedAccount,
+         name: snap.val().name,
+         firstname: snap.val().firstname,
          address: snap.val().address,
          localisation: snap.val().localisation,
          tel : snap.val().tel,
          siret: snap.val().siret,
-         tarif: snap.val().tarif,
-         experience: snap.val().experience,
-         typePermisSelect: snap.val().typePermisSelect,
-         validatedAutorisation: snap.val().validatedAutorisation,
-         validatedCarteGrise: snap.val().validatedCarteGrise,
-         validatedAssurance: snap.val().validatedAssurance,
-         validatedRCPro: snap.val().validatedRCPro
+         nbMoniteurs: snap.val().nbMoniteurs,
+         validatedKbis: snap.val().validatedKbis
       });
     })
-    console.log(this.state.validatedAssurance)
-    console.log(this.state.validatedAutorisation)
   }
 
   // Recuperation value in Storage
@@ -59,6 +54,7 @@ class ProfileMI extends React.Component {
 
   // Check if Profile is complete
   _completeProfile(){
+    console.log(this.state.validatedAccount)
     if(this.state.validatedAccount === 1){
       return <Text>Votre profil est complet</Text>
     }
@@ -112,6 +108,11 @@ class ProfileMI extends React.Component {
           {this._completeProfile()}
           <Text style={{fontSize:20, fontWeight:'bold'}}>{auth.currentUser.displayName}</Text>
           <View style={{marginVertical: 5, alignItems:'center',justifyContent : 'center'}}>
+            <Text style={{fontSize:16, fontWeight:'bold'}}>Gérant</Text>
+            <Text>{this.state.firstname}</Text>
+            <Text>{this.state.name}</Text>
+          </View>
+          <View style={{marginVertical: 5, alignItems:'center',justifyContent : 'center'}}>
             <Text style={{fontSize:16, fontWeight:'bold'}}>Téléphone</Text>
             <Text>{this.state.tel}</Text>
           </View>
@@ -122,29 +123,18 @@ class ProfileMI extends React.Component {
             <Text>{this.state.localisation}</Text>
           </View>
           <View style={{marginVertical: 5, alignItems:'center',justifyContent : 'center'}}>
-            <Text style={{fontSize:16, fontWeight:'bold'}}>Années d'expérience</Text>
-            <Text>{this.state.experience}</Text>
-          </View>
-          <View style={{marginVertical: 5, alignItems:'center',justifyContent : 'center'}}>
-            <Text style={{fontSize:16, fontWeight:'bold'}}>Titulaire des permis</Text>
-            <Text>{this.state.typePermisSelect}</Text>
-          </View>
-          <View style={{marginVertical: 5, alignItems:'center',justifyContent : 'center'}}>
-            <Text style={{fontSize:16, fontWeight:'bold'}}>Tarifs</Text>
-            <Text>{this.state.tarif} €/heure</Text>
-          </View>
-          <View style={{marginVertical: 5, alignItems:'center',justifyContent : 'center'}}>
             <Text style={{fontSize:16, fontWeight:'bold'}}>Siret</Text>
             <Text>{this.state.siret}</Text>
           </View>
+          <View style={{marginVertical: 5, alignItems:'center',justifyContent : 'center'}}>
+            <Text style={{fontSize:16, fontWeight:'bold'}}>Nombre de moniteurs</Text>
+            <Text>{this.state.nbMoniteurs}</Text>
+          </View>
           <View  style={{marginVertical: 10, alignItems:'center',justifyContent : 'center'}}>
             <Text style={{fontSize:20, fontWeight:'bold'}}>Vos documents</Text>
-            {this._getDocument(this.state.validatedAutorisation, "autorisation d'enseignement")}
-            {this._getDocument(this.state.validatedCarteGrise, "carte grise")}
-            {this._getDocument(this.state.validatedAssurance,"assurance")}
-            {this._getDocument(this.state.validatedRCPro, "RC Pro")}
+            {this._getDocument(this.state.validatedKbis, "Kbis de - 3 mois")}
           </View>
-        <TouchableOpacity onPress={() => this.props.navigation.navigate('EditProfileMI')} style={styles.button}>
+        <TouchableOpacity onPress={() => this.props.navigation.navigate('EditProfileAE')} style={styles.button}>
           <Text style={styles.buttonText}>Modifier le profil</Text>
         </TouchableOpacity>
         </ImageBackground>
@@ -153,7 +143,7 @@ class ProfileMI extends React.Component {
   }
 }
 
-export default ProfileMI;
+export default ProfileAE;
 
 
 const customs = StyleSheet.create({

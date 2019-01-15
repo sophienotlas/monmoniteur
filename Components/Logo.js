@@ -11,7 +11,7 @@ import {
 export default class Logo extends React.Component {
   render(){
     return(
-        <View>
+        <View style={styles.container}>
         <Image style={{width:200, height: 200}}
         source={require('../Images/logo-monmoniteur.png')}/>
         <Text style={styles.logoText}>
@@ -35,5 +35,9 @@ const styles = StyleSheet.create({
     fontSize:20,
     color:'black',
     textAlign:'center'
+  },
+  container: {
+    alignItems:'center',
+    justifyContent : 'center'
   }
 })
