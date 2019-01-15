@@ -19,6 +19,7 @@ import {
 } from 'react-native-elements'
 
 import Logo from '../../Components/Logo';
+import Navigation from '../../Navigation/Navigation'
 
 import {auth, db} from '../../Firebase/Firebase'
 

@@ -7,39 +7,20 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, StatusBar} from 'react-native';
+import {Platform, StyleSheet, Text, View, Image, Button, StatusBar} from 'react-native';
 
 import { StackNavigator} from 'react-navigation'
 import Navigation from './Navigation/Navigation'
-import { auth } from 'firebase';
+import ProfileMI from './Components/Profile/ProfileMI'
+import ProfileAE from './Components/Profile/ProfileAE'
+import Login from './Components/Auth/Login'
 
-
+import {auth, db, fb } from './Firebase/Firebase';
 export default class App extends React.Component {
-  constructor(props){
-    super(props)
-    this.state = {moniteurOuAutoEcole:''}
-  };
 
-  getDataUser(){
-    if(auth.currentUser){
-      moniteur = db.ref('users/'+auth.currentUser.uid);
-      moniteur.on('value', (snap) => {
-        this.setState({
-          moniteurOuAutoEcole: snap.val().moniteurOuAutoEcole
-        });
-      })
-    }
-  }
-
-  // Recuperation value in Storage
-  componentDidMount() {
-    this.getDataUser()
-  }
-
-  render() {
-    return(
-      <Navigation/>
-    )
-    }      
+        
+    render() {
+     return <Navigation/>
+    }  
 
 }

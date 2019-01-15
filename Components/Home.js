@@ -20,49 +20,45 @@ import {db} from '../Firebase/Firebase'
 import styles from '../Styles/Style'
 
 class Home extends React.Component {
-  constructor() {
-        super()
   
-    this.validatedAccount = db.ref('users/'+auth.currentUser.uid).child('validatedAccount')
-    this.state = {validatedAccount: ''}
-    }
+  constructor(props) {
+    super(props);
+    this._bootstrapAsync();
+}
 
-    componentWillMount() {
-      this.validatedAccount.on('value',  snap => {
-        this.setState({
-          validatedAccount: snap.val()
-          })
-        })
-    }
-
-  _completeProfile() {
-    alert(this.state.validatedAccount)
-      if(this.state.validatedAccount == '1'){
-        return 'Profil en règle'
-      } else {
-        return 'Veuillez compléter votre profil'
+moniteurAutoEcole(){
+  if(auth.currentUser){
+    db.ref('moniteurs/').on('value', (snap) => {
+      if(snap.child(auth.currentUser.uid).exists()){
+        this.props.navigation.navigate('ProfileMI');
       }
-  }
-  
 
-  _readName() {
-    auth.onAuthStateChanged(function(user) {
-      if (user) {
-        return auth.currentUser.displayName
-      } 
+    });
+    db.ref('autoecoles/').on('value', (snap) => {
+        if(snap.child(auth.currentUser.uid).exists()){
+          this.props.navigation.navigate('ProfileAE');
+        }
     })
   }
+}
 
-  render() {
-    return(
-      <View>
-        <ImageBackground source={require('../Images/accueil.jpg')} style={styles.container}>
-          <Text>Bonjour {this._readName()}</Text>
-          <Text>{this._completeProfile()}</Text>
-        </ImageBackground>
-      </View>
-    )
-  }
+// Fetch the token from storage then navigate to our appropriate place
+_bootstrapAsync = async () => {
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      this.setState({ signedIn: true });
+      this.moniteurAutoEcole()
+    } else {
+      this.props.navigation.navigate('Login');
+    }
+  })
+};
+
+render(){
+  return (
+    <View><Text>Chargement</Text></View>
+  )
+}
 }
 
 export default Home
