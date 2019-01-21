@@ -1,24 +1,13 @@
-import React, {Component} from 'react'
+import React from 'react'
 import {
-  Platform,
-  StyleSheet,
   Text,
   View,
-  StatusBar,
-  Image,
   TextInput,
-  Button,
   TouchableOpacity,
   ImageBackground
   } from 'react-native'
-import {
-  FormLabel, 
-  FormInput,
-  CheckBox
-} from 'react-native-elements'
 
-import {auth} from '../../Firebase/Firebase'
-import {db} from '../../Firebase/Firebase'
+import { fb} from '../../Firebase/Firebase'
 
 import styles from '../../Styles/Style'
 
@@ -28,23 +17,25 @@ class ChangePassword extends React.Component {
         this.state = {currentPassword:'', newPassword:'', confirmPassword:'', error:'', success:'', loading:false}
     }
 
-    reauthenticate = (currentPassword) => {
-        var cred = auth.currentUser.EmailAuthProvider.credential(user.email, currentPassword);
-        return user.reauthenticateWithCredential(cred);
-    }
-
     onChangePasswordPress = () => {
-        if(this.state.newPassword == this.state.confirmPassword){
-            this.reauthenticate(this.state.currentPassword).then(() => {
-                auth.currentUser.updatePassword(this.state.newPassword).then(() => {
-                    this.setState({success: 'Le mot de passe a été modifié'})
-                }).catch((error) => { console.log(error.message); });
-            }).catch((error) => { console.log(error.message) });
-        } else {
-            this.setState({error: 'Les mots de passe ne sont pas identiques'})
-        }
+      var user = fb.auth().currentUser;
+      this.setState({error: 'Loading'});
+      var user = fb.auth().currentUser;
+      if(this.state.newPassword == this.state.confirmPassword){
+        fb.auth().currentUser.updatePassword(this.state.newPassword).then(() => {
+          console.log("changé")
+          var credential = fb.auth.EmailAuthProvider.credential(user.email, this.currentPassword);
+          user.reauthenticateAndRetrieveDataWithCredential(credential).then(function() {
+            this.setState({error: 'Le mot de passe a été modifié'})
+          }).catch(function() {
+            this.setState({error: 'Erreur authentification'})
+          });          
+        }).catch((error) => { console.log('blabla') });
+      } else {
+        this.setState({error: 'Les mots de passe ne sont pas identiques'})
+      }
     }
-
+    
 
 
   _renderButtonOrLoading(){
@@ -66,18 +57,21 @@ class ChangePassword extends React.Component {
            style={styles.inputBox}
            underlineColorAndroid='rgba(0,0,0,0)'
            placeholder='Ancien le mot de passe'
+           secureTextEntry={true}
            onChangeText={currentPassword => this.setState({currentPassword})}
           />
           <TextInput 
            style={styles.inputBox}
            underlineColorAndroid='rgba(0,0,0,0)'
            placeholder='Nouveau le mot de passe'
+           secureTextEntry={true}
            onChangeText={newPassword => this.setState({newPassword})}
           />
           <TextInput 
            style={styles.inputBox}
            underlineColorAndroid='rgba(0,0,0,0)'
            placeholder='Confirmer le mot de passe'
+           secureTextEntry={true}
            onChangeText={confirmPassword => this.setState({confirmPassword})}
           />
           <Text>{this.state.error}</Text>  

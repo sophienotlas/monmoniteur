@@ -40,6 +40,13 @@ export default StyleSheet.create({
     width:300,
     paddingVertical:10
   },
+  buttonDelete:{
+    backgroundColor:'#9c0909',
+    borderRadius:5,
+    marginVertical:10,
+    width:300,
+    paddingVertical:10
+  },
   buttonPermis:{
     borderColor:'rgba(0,0,0,0.3)',
     borderWidth:1,

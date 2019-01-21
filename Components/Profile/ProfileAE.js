@@ -23,6 +23,7 @@ import {
 
 import {auth, db, fb } from '../../Firebase/Firebase';
 import styles from '../../Styles/Style'
+import EditProfileAE from './EditProfileAE';
 
 class ProfileAE extends React.Component {
   constructor() {
@@ -97,6 +98,29 @@ class ProfileAE extends React.Component {
     }
   }
 
+  _deleteAccount(){
+    auth.currentUser.delete().then(function() {
+      this.props.navigation.navigate('Login')
+    }).catch(function(error) {
+      Alert.alert(
+      'Une erreur est survenue',
+      { cancelable: false }
+    )
+    });
+    
+  }
+
+  _deleteAccountPopUp(){
+    Alert.alert(
+      'Voulez-vous vraiment supprimer votre compte ?',
+      'Cette action est irréversible',
+      [
+        {text: 'Annuler', onPress: () => console.log('Ask me later pressed')},
+        {text: 'Supprimer mon compte', onPress: this._deleteAccount(), style: 'cancel'}
+      ],
+      { cancelable: false }
+    )
+  }
   render(){
     return(
       <ScrollView>
@@ -116,7 +140,6 @@ class ProfileAE extends React.Component {
             <Text style={{fontSize:16, fontWeight:'bold'}}>Téléphone</Text>
             <Text>{this.state.tel}</Text>
           </View>
-          <Text style={{fontSize:20, fontWeight:'bold'}}>{auth.currentUser.displayName}</Text>
           <View style={{marginVertical: 5, alignItems:'center',justifyContent : 'center'}}>
             <Text style={{fontSize:16, fontWeight:'bold'}}>Adresse</Text>
             <Text>{this.state.address}</Text>
@@ -134,9 +157,9 @@ class ProfileAE extends React.Component {
             <Text style={{fontSize:20, fontWeight:'bold'}}>Vos documents</Text>
             {this._getDocument(this.state.validatedKbis, "Kbis de - 3 mois")}
           </View>
-        <TouchableOpacity onPress={() => this.props.navigation.navigate('EditProfileAE')} style={styles.button}>
-          <Text style={styles.buttonText}>Modifier le profil</Text>
-        </TouchableOpacity>
+          <TouchableOpacity onPress={this._deleteAccountPopUp} style={styles.buttonDelete}>
+            <Text style={styles.buttonText}>Supprimer mon compte</Text>
+          </TouchableOpacity>
         </ImageBackground>
       </ScrollView>
     )
@@ -148,9 +171,10 @@ export default ProfileAE;
 
 const customs = StyleSheet.create({
   picture:{
+    marginTop: 50,
     width: 128,
     height: 128,
-    marginVertical: 15,
+    marginBottom: 15,
     borderRadius: 64,
     overflow: 'hidden',
     resizeMode: 'contain',

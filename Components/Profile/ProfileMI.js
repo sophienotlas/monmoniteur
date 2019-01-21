@@ -101,6 +101,17 @@ class ProfileMI extends React.Component {
     }
   }
 
+  _deleteAccount(){
+    Alert.alert(
+      'Voulez-vous vraiment supprimer votre compte ?',
+      'Cette action est irréversible',
+      [
+        {text: 'Annuler', onPress: () => console.log('Ask me later pressed')},
+        {text: 'Supprimer mon compte', onPress: () => console.log('Cancel Pressed'), style: 'cancel'}
+      ],
+      { cancelable: false }
+    )
+  }
   render(){
     return(
       <ScrollView>
@@ -143,10 +154,10 @@ class ProfileMI extends React.Component {
             {this._getDocument(this.state.validatedCarteGrise, "carte grise")}
             {this._getDocument(this.state.validatedAssurance,"assurance")}
             {this._getDocument(this.state.validatedRCPro, "RC Pro")}
+          <TouchableOpacity onPress={this._deleteAccount} style={styles.buttonDelete}>
+            <Text style={styles.buttonText}>Supprimer mon compte</Text>
+          </TouchableOpacity>
           </View>
-        <TouchableOpacity onPress={() => this.props.navigation.navigate('EditProfileMI')} style={styles.button}>
-          <Text style={styles.buttonText}>Modifier le profil</Text>
-        </TouchableOpacity>
         </ImageBackground>
       </ScrollView>
     )
@@ -158,9 +169,10 @@ export default ProfileMI;
 
 const customs = StyleSheet.create({
   picture:{
+    marginTop: 50,
+    marginBottom: 15,
     width: 128,
     height: 128,
-    marginVertical: 15,
     borderRadius: 64,
     overflow: 'hidden',
     resizeMode: 'contain',

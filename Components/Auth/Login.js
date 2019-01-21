@@ -19,11 +19,11 @@ import {
 } from 'react-native-elements'
 
 import Logo from '../../Components/Logo';
-import Navigation from '../../Navigation/Navigation'
 
 import {auth, db} from '../../Firebase/Firebase'
 
 import styles from '../../Styles/Style'
+import ForgotPassword from './ForgotPassword';
 
 class Login extends React.Component {
   constructor(props){
@@ -62,7 +62,7 @@ class Login extends React.Component {
   render(){
     return(
       <ImageBackground source={require('../../Images/accueil.jpg')} style={styles.container}>
-        <View style={styles.container}>
+        <View style={{marginTop: 75, alignItems:'center', justifyContent : 'center'}}>
         <KeyboardAvoidingView behavior='position'>
           <Logo/>
           <TextInput style={styles.inputBox}
@@ -81,10 +81,10 @@ class Login extends React.Component {
           </KeyboardAvoidingView>
           <Text>{this.state.error}</Text>         
           {this._renderButtonOrLoading()}
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('ForgotPassword')}>
+          <TouchableOpacity onPress={() => this.props.navigator.navigate({ component: ForgotPassword})}>
             <Text style={styles.signupButton}> Mot de passe oublié ?</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('Signup')}>
+          <TouchableOpacity style={{flex: 1, marginBottom:10, justifyContent: 'flex-end'}} onPress={() => this.props.navigator.navigate({ component: Signup})}>
             <Text style={styles.signupButton}> S'inscrire</Text>
           </TouchableOpacity>
         </View>

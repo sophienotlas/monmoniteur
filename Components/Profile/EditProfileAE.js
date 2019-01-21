@@ -110,8 +110,8 @@ class EditProfileAE extends React.Component {
         nbMoniteurs: this.state.nbMoniteurs,
         validatedKbis: this.state.validatedKbis
       }).then((data)=>{
-        console.log('data ' , data)
-        this.props.navigation.navigate('ProfileAE')
+        console.log('data ' , data);
+        this.props.navigator.push({ component: ProfileAE });
      }).catch((error)=>{
         console.log('error ' , error)
       })
@@ -319,6 +319,8 @@ export default EditProfileAE;
 
 const customs = StyleSheet.create({
   picture:{
+    marginTop: 50,
+    marginBottom: 15,
     width: 128,
     height: 128,
     borderRadius: 64,

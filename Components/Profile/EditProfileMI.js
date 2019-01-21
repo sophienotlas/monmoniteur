@@ -154,8 +154,8 @@ class EditProfileMI extends React.Component {
         validatedAssurance: this.state.validatedAssurance,
         validatedRCPro: this.state.validatedRCPro
       }).then((data)=>{
-        console.log('data ' , data)
-        this.props.navigation.navigate('ProfileMI')
+        console.log('data ' , data);
+        this.props.navigator.push({ component: ProfileMI });
      }).catch((error)=>{
         console.log('error ' , error)
       })
@@ -409,6 +409,8 @@ export default EditProfileMI;
 
 const customs = StyleSheet.create({
   picture:{
+    marginTop: 50,
+    marginBottom: 15,
     width: 128,
     height: 128,
     borderRadius: 64,
