@@ -75,7 +75,6 @@ class GetLocalisation extends React.Component {
                     }}
                     query={{
                     // available options: https://developers.google.com/places/web-service/autocomplete
-                    key: 'AIzaSyC58rA63FNv5SEDnjzFhJdawpb45AlhzfA',
                     language: 'fr', // language of the results
                     types: '(cities)', // default: 'geocode'
                     }}
